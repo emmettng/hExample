@@ -24,6 +24,15 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+  - text
+  - Decimal 
+  - random
+  - mtl
+  - containers
+  - time
+  - vector
+
 
 executables:
   Examples-exe:

@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module List.Yahtzee where
 
 -- We don’t need to know what the program does to apply this refactoring.
@@ -6,6 +8,7 @@ module List.Yahtzee where
 -- | 
 -- This is the example from https://blog.plover.com/prog/haskell/type-markers.html
 -- Refactor from : http://h2.jaguarpaw.co.uk/posts/good-design-and-type-safety-in-yahtzee/
+-- 		and http://h2.jaguarpaw.co.uk/posts/using-brain-less-refactoring-yahtzee/
 --
 --
 -- |
@@ -218,11 +221,11 @@ module List.Yahtzee where
 -- 	1. mapM :: Monad m => ( a -> m b) -> t a -> m (t b) 
 -- 	2. Avoid boolean blindness : dice value and reroll choice acturally pair up. So we introduce the new DiceChoice type
 --
-type DiceVals = [Integer]
-
 -- 
 -- type DiceTurn = [(Bool, Integer)]
 --
+type DiceVals = [Integer]
+
 data DiceChoice
   = Keep Integer
   | Reroll
@@ -234,11 +237,12 @@ allRollsNoN dc = mapM roll dc
     roll (Keep v) = [v]
     roll Reroll = [1 .. 6]
 
+-- | relies on TupleSections
 allRolls :: [DiceChoice] -> Int -> [(DiceVals, Int)]
-allRolls t n =
-  [ (d, n - 1)
-  | d <- allRollsNoN t ]
+allRolls t n = fmap (, n - 1) $ allRollsNoN t
 
+--   [ (d, n - 1)
+--   | d <- allRollsNoN t ]
 exampleFinal =
   let diceChoice = [Reroll, Keep 4, Keep 3, Reroll, Reroll]
   in mapM_ print $ allRolls diceChoice 2
