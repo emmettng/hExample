@@ -1,13 +1,25 @@
 # Probplot
 
-## 1. Q-Q plot (quantile quantile plot)
+## 1. Q-Q plot and Prob plot
 Describe the relationship between two distributions.
- 
-Terms:
-- CDF : cumulative density function.
-- PPF : percent point function (inverse of cdf function).
 
-How Q-Q plot works:
+0. Summary 
+ 
+    Terms:
+    - CDF : cumulative density function.
+    - PPF : percent point function (inverse of cdf function).
+    
+    [in Python package Statsmodels](https://github.com/statsmodels/statsmodels/blob/66fc298c51dc323ce8ab8564b07b1b3797108dad/statsmodels/graphics/gofplots.py#L58)
+    >ppplot : Probability-Probability plot Compares the sample and theoretical probabilities (percentiles).
+    >
+    >qqplot : Quantile-Quantile plot Compares the sample and theoretical quantiles
+    >
+    >probplot : Probability plot Same as a Q-Q plot, however probabilities are shown in the scale of the theoretical distribution (x-axis) and the y-axis contains unscaled quantiles of the sample data.
+
+    QQ plot is normalized sample distribution (Y axis) against target distribution (X axis). Prob plot is unscaled sample data (Y axis) against target distribution (x axis).
+![probplot work flow](../../imgs/statistics/probplot_flow.png)
+
+## What Q-Q plot is:
 
 1. Assume we have CDF of two distributions:
     - target distribution `t`
@@ -23,6 +35,8 @@ How Q-Q plot works:
     $F = t^{-1} . s$
 
     In this case, if `t` $\equiv$ `s`, then function $F = id$, therefore function $F$ will be a $45\degree$ line.
+
+## How ?
 2. How to plot target distribution against sample distrition.
    - sort sample data.          `d_s = sort d_s`
    - get quantile list of sorted sample data    `p_s = uniform_plot d_s`
@@ -46,10 +60,7 @@ How Q-Q plot works:
    
    least-squre regression
 
-4. work flow summary:
-5. ![probplot work flow](../../imgs/statistics/probplot_flow.png)
-
-### References
+## Examples
 - package: scipy
     ```
     >>> from scipy import stats
