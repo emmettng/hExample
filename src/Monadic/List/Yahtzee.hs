@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module List.Yahtzee where
+module Monadic.List.Yahtzee where
 
 -- We don’t need to know what the program does to apply this refactoring.
 --
@@ -231,7 +231,7 @@ data DiceChoice
   | Reroll
 
 allRollsNoN :: [DiceChoice] -> [DiceVals]
-allRollsNoN dc = mapM roll dc
+allRollsNoN = mapM roll
   where
     roll :: DiceChoice -> [Integer]
     roll (Keep v) = [v]
@@ -239,7 +239,7 @@ allRollsNoN dc = mapM roll dc
 
 -- | relies on TupleSections
 allRolls :: [DiceChoice] -> Int -> [(DiceVals, Int)]
-allRolls t n = fmap (, n - 1) $ allRollsNoN t
+allRolls t n = (, n - 1) <$> allRollsNoN t
 
 --   [ (d, n - 1)
 --   | d <- allRollsNoN t ]
