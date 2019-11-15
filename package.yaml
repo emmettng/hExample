@@ -33,6 +33,8 @@ library:
   - time
   - vector
   - configurator        ### Package.Configurator
+  - statistics
+  - transformers
 
 
 executables:
