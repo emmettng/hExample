@@ -1,13 +1,12 @@
 module Monadic.ReaderState.ForHuman where
 
-
--- summary 
--- imlementation 
--- ask 
--- local 
+-- summary
+-- imlementation
+-- ask
+-- local
 -- asks
--- runreaderT ==> bring out , follow by an Env 
--- intuitation: pass Env through all chain of operations. 
+-- runreaderT ==> bring out , follow by an Env
+-- intuitation: pass Env through all chain of operations.
 
 -- Example One imports
 import           Control.Monad.Trans.Reader
@@ -17,17 +16,17 @@ import           GHC.Float
 import           Control.Monad.IO.Class
 import           Control.Monad    -- kleisli arrow ( >=> )
 
--- The context informaiton is Env 
+-- The context informaiton is Env
 -- syntax: give me a Env gave you an output
 
 
 -- | Example one ------------->>----------------->>------------->>
--- Core operations chain  
+-- Core operations chain
 -- Intuitive Explaination:
 --          CoreInput -> Reader Env CoreOutput
 --          Pass Env down through the core operation chain.
 
--- core operation 1 :: Int -> Int  
+-- core operation 1 :: Int -> Int
 a1 :: Int -> Reader Int Int
 a1 n = do
     env <- ask           -- get Enviroment information
@@ -48,36 +47,36 @@ a3 f = do
     let fn = fromIntegral env
     return $ float2Double $ fn * f
 
--- | A Chain of core operations. 
+-- | A Chain of core operations.
 -- Return a function from `enviroment information` to `result`
--- only when enviroment information being provided, the result 
+-- only when enviroment information being provided, the result
 -- can be produced.
 chainA :: Int -> Reader Int Double
 chainA n = do
     t1 <- a1 n          -- core operaiton 1
     t2 <- a2 t1         -- core operaiton 2
     a3 t2               -- core operation 3
-    
+
 chainA' :: Int -> Reader Int Double
 chainA' = a1 >=> a2 >=> a3
--- 
+--
 -- ask :: (Monad m) => ReaderT r m r
--- ask = ReaderT return 
--- 
+-- ask = ReaderT return
+--
 -- return :: r -> m r
 
 --  let p1 = chainA 10
 --  runReader p1 $ 2
 --  0.3333333432674408
---  env is 2 and n is 10 so 
+--  env is 2 and n is 10 so
 --  t1 = 10 + 2 , t2 = 2 / 12,  t3 = 2*2 / 12  =  0.33333333
 
 -- | Example Two: ------------->>----------------->>------------->>
 -- Monad transformer and envrioment information dependence only.
 -- Operations depend only on Env information.
 -- Intuitive Explaination:
---     Sequence opeartion depends only on Enviroment. 
---      
+--     Sequence opeartion depends only on Enviroment.
+--
 b1 :: (MonadIO m) => ReaderT String m Int
 b1 = do
     env <- ask           -- get Enviroment information
@@ -107,7 +106,7 @@ b3 = do
 
 -- | b1 b2 b3, use same Env of type String
 --   Three paraller computations.
--- runReaderT tryB ==> function that take a Env and produce a result 
+-- runReaderT tryB ==> function that take a Env and produce a result
 -- of chain
 tryB :: ReaderT String IO Float
 tryB = do
@@ -134,7 +133,7 @@ tryB = do
 -- withReaderT :: (r' -> r) -> ReaderT r m a -> ReaderT r' m a
 --
 -- Intuitive Explaination:
---      local change env within same type 
+--      local change env within same type
 ---     withReaderT change env to another type
 -- *** The modification only effect temporarily. That is the reason why
 -- the name is `local`
@@ -156,36 +155,36 @@ tryC = do
 
 --  let p = runReaderT tryC
 --  r <- p "10"   -- env is "10"
--- 1        b1 readin 1  
--- 2        b2 readin 2  ; computation c1 
--- 3        b3 readin 3 
+-- 1        b1 readin 1
+-- 2        b2 readin 2  ; computation c1
+-- 3        b3 readin 3
 --  r
 -- 346.0
 -- 1+10 + 10/2 + 10*3 + 110*5 = 596
 
 -- |
--- local modify the value of Env 
+-- local modify the value of Env
 -- withReaderT is more general, it could modify the type of Env.
--- The type of withReaderT guarantee the computation stays in 
+-- The type of withReaderT guarantee the computation stays in
 -- ReaderT r' m a
 -- local
 --     :: (r -> r)         -- ^ The function to modify the environment.
 --     -> ReaderT r m a    -- ^ Computation to run in the modified environment.
 --     -> ReaderT r m a
 -- local = withReaderT
--- 
+--
 -- withReaderT
 --     :: (r' -> r)        -- ^ The function to modify the environment.
 --     -> ReaderT r m a    -- ^ Computation to run in the modified environment.
 --     -> ReaderT r' m a
 -- withReaderT f m = ReaderT $ runReaderT m . f
--- 
+--
 
 -- | Example Four ------------->>----------------->>------------->>
--- asks :: (Monad m) => (r - a) -> ReaderT r m a 
+-- asks :: (Monad m) => (r - a) -> ReaderT r m a
 -- Intuitive Explaination:
---         convert an simple function into ReaderT. 
---          
+--         convert an simple function into ReaderT.
+--
 simpleFunc :: String -> Float
 simpleFunc s = 1000 + read s
 
@@ -199,7 +198,7 @@ tryD = do
     td1 <- asks simpleFunc
     return $ fromIntegral t1 + t2 + double2Float t3 + tc1 + td1
 
---  let p = runReaderT tryD 
+--  let p = runReaderT tryD
 --  r <- p "10"
 -- 1
 -- 2
