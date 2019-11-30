@@ -1,3 +1,4 @@
 .stack-work/
 Examples.cabal
 *~
+*.DS_Store
