@@ -1,12 +1,15 @@
 module Monadic.ReaderState.ForHuman where
 
 -- summary
--- imlementation
+-- | Common usage:
 -- ask
 -- local
 -- asks
 -- runreaderT ==> bring out , follow by an Env
 -- intuitation: pass Env through all chain of operations.
+-- runReader / runReaderT
+-- retrive the function wrapped inside
+-- feed the 'env' information that being used for every function in this function chain .
 
 -- Example One imports
 import           Control.Monad.Trans.Reader
