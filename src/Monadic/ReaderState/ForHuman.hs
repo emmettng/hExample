@@ -1,21 +1,56 @@
 module Monadic.ReaderState.ForHuman where
 
--- summary
--- | Common usage:
--- ask
--- local
--- asks
--- runreaderT ==> bring out , follow by an Env
--- intuitation: pass Env through all chain of operations.
--- runReader / runReaderT
--- retrive the function wrapped inside
--- feed the 'env' information that being used for every function in this function chain .
+-- newtype ReaderT r m a = ReaderT { runReaderT :: r -> m a }
 
--- Example One imports
+-- Summary
+
+-- Function 'ask' introduce the 'env' informatoin into the Reader Monad
+-- 'local' (withReaderT) alter the 'env' information temporarily.
+-- 'asks' convert a function from 'env' to other type to a Reader Monad.
+-- Usually, one 'ask' will related to one Reader Monad that represent a function depends on 'env' information.
+-- Because there could be several function depends on same 'env'. They can be composed by >>= or >=>.
+
+-- ask
+-- ask :: (Monad m) => ReaderT r m r
+-- ask = ReaderT return
+-- return :: r -> m r
+
+-- local
+-- local
+--     :: (r -> r)         -- ^ The function to modify the environment.
+--     -> ReaderT r m a    -- ^ Computation to run in the modified environment.
+--     -> ReaderT r m a
+-- local = withReaderT
+--
+-- withReaderT
+--     :: (r' -> r)        -- ^ The function to modify the environment.
+--     -> ReaderT r m a    -- ^ Computation to run in the modified environment.
+--     -> ReaderT r' m a
+-- withReaderT f m = ReaderT $ runReaderT m . f
+
+-- asks
+-- asks :: (Monad m)
+--     => (r -> a)         -- ^ The selector function to apply to the environment.
+--     -> ReaderT r m a
+-- asks f = ReaderT (return . f)
+-- {-# INLINE asks #-}
+
+
+-- | Common usage
+-- 1. use 'ask' to introduce the 'env' into computation. (almost compulsory, asks is rarely being used)
+-- 2. so we could construct functions of type `a -> Reader r b` or `Reader r b`. (compulsory)
+-- 3. 'local' or 'withReaderT' alter enviroment (optional)runreaderT ==> bring out , follow by an Env. (optional)
+-- 4. 'runReader' or 'runreaderT' to unwrapp functions. (compulsory)
+-- 5. Feed the 'env' information (compulsory)
+
+-- | Intuition:
+-- Pass Env/Context/Configuration information through a chain of operations that share the same information.
+
+-- Imports before Example One
 import           Control.Monad.Trans.Reader
 import           GHC.Float
 
--- Example Two imports
+-- Imports before Example Two
 import           Control.Monad.IO.Class
 import           Control.Monad    -- kleisli arrow ( >=> )
 

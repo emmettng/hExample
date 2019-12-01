@@ -1,8 +1,8 @@
 module Monadic.ReaderState.StateForHuman where
 
+-- newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
 
-import Control.Monad.Trans.State
-
+-- Summary
 
 -- functions 'get', 'put', 'return'
 -- each produce a State monad in different purposes
@@ -37,20 +37,9 @@ import Control.Monad.Trans.State
 --         runStateT (k a) s'
 --     {-# INLINE (>>=) #-}
 
-
--- | Common usage
--- 1. use 'get' to introduce state. (compulsory)
--- 3. some pure function :: s -> a will work on s . (optional)
--- 4. 'return' use to wrap the result of 3 into State Monad. (compulsory)
--- 5. 'put' will put update the state. (optional)
--- 6. 'evalState' / 'evalStateT'
---              or
---    'runState' / 'runStateT'
---  get the function wrapped inside slight differently. (compulsory)
-
 -- runStateT
 -- newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
---
+
 -- evalStateT
 -- evalStateT :: (Monad m) => StateT s m a -> s -> m a
 -- evalStateT m s = do
@@ -64,7 +53,7 @@ import Control.Monad.Trans.State
 --          -> s           -- ^initial state
 --          -> (a, s)      -- ^return value and final state
 -- runState m = runIdentity . runStateT m
---
+
 -- evalState
 -- evalState :: State s a  -- ^state-passing computation to execute
 --           -> s          -- ^initial value
@@ -72,6 +61,28 @@ import Control.Monad.Trans.State
 -- evalState m s = fst (runState m s)
 -- {-# INLINE evalState #-}
 
+-- | Common usage
+-- 1. use 'get' to introduce state. (compulsory)
+-- 3. some pure function :: s -> a will work on s . (optional)
+-- 4. 'return' use to wrap the result of 3 into State Monad. (compulsory)
+-- 5. 'put' will put update the state. (optional)
+-- 6. 'evalState' / 'evalStateT'
+--              or
+--    'runState' / 'runStateT'
+--  get the function of type ' :: s -> (a,s) 'wrapped inside. They each works slight differently. (compulsory)
+-- 6.1 runState / runStateT retrive function ' s-> (a,s)' or 's -> m (a,s)'
+-- 6.2 evalState / evalStateT retrive function ' s -> a' or ' s -> m a'
+
+-- | Intuition:
+-- 1. State Monad wrap a function from type 's' to an core out put 'a' and another value of type 's' :: s -> (a,s)
+-- 2. 'get', 'put', 'return' each represent Reader Monads of different specific purpose.
+-- 3. Usually, they composed (>>=) (>>) together to form a functional new State Monad.
+
+
+-- | Imports before Example One
+
+import Control.Monad.Trans.State
+import Control.Monad        -- >=>
 -- |Example one
 
 -- In general . State Monad is a monad represent a function relation .
@@ -104,3 +115,14 @@ s3 str = do
   put ns
   return $ length ns
 
+sChainOne :: Int -> State String Int
+sChainOne = s1 >=> s2 >=> s3
+--
+---- > :info sChainOne
+---- sChainOne :: Int -> State String Int
+---- > let sFunc = runState $ sChainOne 20
+---- sFunc :: String -> (Int, String) 	-- Defined at <interactive>:13:5
+---- > let r = sFunc "emmettng"
+---- > r
+---- (43,"1.8181819_20_emmettng_1.8181819_20_emmettng")
+-- 20 ==> (20_#s
