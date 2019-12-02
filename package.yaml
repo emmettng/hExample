@@ -35,6 +35,7 @@ library:
   - configurator        ### Package.Configurator
   - statistics
   - transformers
+  - store
 
 
 executables:
