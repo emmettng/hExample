@@ -239,6 +239,7 @@ tryD = do
 -- 1606.0
 --1+10 + 10/2 +  10*3 + 110 * 5 + 1010 = 1606
 --
+-- | Start the staging example 
 data Env = Env
   { sf1Env :: String
   , sf2Env :: Int
