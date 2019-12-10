@@ -430,6 +430,7 @@ newCoreChain :: () -> NewStage Env Int
 -- newCoreChain = (\_ -> sf1) >=> sf2 >=> sf3 >=> sf4 >=> (\_ -> sf5)
 newCoreChain = (\_ -> sf1N) >=> sf2N >=> sf3N >=> sf4N >=> (\_ -> sf5N)
 
+-- | TODO , this purify part needs to add more content
 -- | If we do look at the function from only its own viewpoint
 -- The core function here is actually from One type to another.
 -- It is not necessary to know where is this input come from
@@ -448,7 +449,7 @@ instance (HasEnv4 r, MonadIO m) =>
 sf4C
   :: SF4C m
   => (Double -> Double -> String) -> Double -> m String
-sf4C f arg1 = effectSF4 f arg1
+sf4C f = effectSF4 f
 
 sf5C
   :: (HasEnv5 r)
