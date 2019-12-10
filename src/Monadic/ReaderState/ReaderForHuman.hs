@@ -47,7 +47,7 @@ import GHC.Float
 import Control.Monad.IO.Class
 import Control.Monad -- kleisli arrow ( >=> )
 
--- Import before Staging Example 
+-- Import before Staging Example
 import GHC.Float
 import Data.Store
 
@@ -239,7 +239,7 @@ tryD = do
 -- 1606.0
 --1+10 + 10/2 +  10*3 + 110 * 5 + 1010 = 1606
 --
--- | Start the staging example 
+-- | Start the staging example
 data Env = Env
   { sf1Env :: String
   , sf2Env :: Int
@@ -288,13 +288,13 @@ coreChain = (\_ -> sf1) >=> sf2 >=> sf3 >=> sf4 >=> (\_ -> sf5)
 --  2. If relative env information changes, we performe the calculation.
 --  3. If previous calculation is new, we performe this calculation.
 --  4. otherwise, we deserialize what we saved on the disk.
--- | we need to name each stage 
+-- | we need to name each stage
 type StageName = String
 
 type Core a = (a, Bool)
 
--- | We use Data.Store to serialize output of each core function 
--- StageName and Env defines this boolen value 
+-- | We use Data.Store to serialize output of each core function
+-- StageName and Env defines this boolen value
 checkSerialization :: StageName -> StageCore (Core FilePath)
 checkSerialization = undefined
 
@@ -304,9 +304,9 @@ type Serializer = forall a. (Store a) =>
 type Deserializer = forall a. (Store a) =>
                               FilePath -> IO a
 
--- | This would be make more sense, 
---  we take a corefunction ( a -> StageCore b) 
---  and a StageName 
+-- | This would be make more sense,
+--  we take a corefunction ( a -> StageCore b)
+--  and a StageName
 --  embellish original corefunction output with a Bool information ( a-> StageCore (b,Bool) == (a -> StageCore (Core b))
 --  this bool information is being used for helping following operation to decide whether to do serialization.
 --
@@ -328,6 +328,8 @@ staging stageName coreFunc (coreInput, preStatus) = do
       return (coreOutput, False)
 
 stageChain =
-  (staging "sf1" (\_ -> sf1)) >=>
-  (staging "sf2" sf2) >=>
-  (staging "sf3" sf3) >=> (staging "sf4" sf4) >=> (staging "sf5" (\_ -> sf5))
+  staging "sf1" (\_ -> sf1) >=>
+  staging "sf2" sf2 >=>
+  staging "sf3" sf3 >=>
+  staging "sf4" sf4 >=>
+  staging "sf5" (\_ -> sf5)
