@@ -1,4 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Monadic.ReaderState.ReaderForHuman where
 
@@ -330,6 +332,127 @@ staging stageName coreFunc (coreInput, preStatus) = do
 stageChain =
   staging "sf1" (\_ -> sf1) >=>
   staging "sf2" sf2 >=>
-  staging "sf3" sf3 >=>
-  staging "sf4" sf4 >=>
-  staging "sf5" (\_ -> sf5)
+  staging "sf3" sf3 >=> staging "sf4" sf4 >=> staging "sf5" (\_ -> sf5)
+
+-- | Introduce the Has typeclass 
+-- TypeClass for retriving sf1Env from Env
+class HasEnv1 a  where
+  getSF1env :: a -> String
+
+instance HasEnv1 String where
+  getSF1env = id
+
+instance HasEnv1 Env where
+  getSF1env = sf1Env
+
+-- TypeClass for retriving sf2Env from Env
+class HasEnv2 a  where
+  getSF2env :: a -> Int
+
+instance HasEnv2 Int where
+  getSF2env = id
+
+instance HasEnv2 Env where
+  getSF2env = sf2Env
+
+-- TypeClass for retriving sf3Env from Env
+class HasEnv3 a  where
+  getSF3env :: a -> Float
+
+instance HasEnv3 Float where
+  getSF3env = id
+
+instance HasEnv3 Env where
+  getSF3env = sf3Env
+
+-- TypeClass for retriving sf4Env from Env
+class HasEnv4 a  where
+  getSF4env :: a -> Double
+
+instance HasEnv4 Double where
+  getSF4env = id
+
+instance HasEnv4 Env where
+  getSF4env = sf4Env
+
+-- TypeClass for retriving sf5Env from Env
+class HasEnv5 a  where
+  getSF5env :: a -> Int
+
+instance HasEnv5 Int where
+  getSF5env = id
+
+instance HasEnv5 Env where
+  getSF5env = sf5Env
+
+-- | Then function sf1 to sf5 could rewrite as follow
+-- In this case:
+-- 1. function associate with meaningful type signatures
+-- 2. It can be test very easily.
+type NewStage r a = ReaderT r IO a
+
+sf1N
+  :: (HasEnv1 r)
+  => NewStage r Int
+sf1N = do
+  env <- ask
+  return $length . getSF1env $ env
+
+sf2N
+  :: (HasEnv2 r)
+  => Int -> NewStage r Float
+sf2N arg2 = do
+  env <- ask
+  return $ fromIntegral $ getSF2env env + arg2
+
+sf3N
+  :: (HasEnv3 r)
+  => Float -> NewStage r Double
+sf3N arg3 = do
+  env <- ask
+  return $ float2Double $ getSF3env env + arg3
+
+sf4N
+  :: (HasEnv4 r)
+  => Double -> NewStage r String
+sf4N arg4 = do
+  env <- ask
+  return $ show $ getSF4env env + arg4
+
+sf5N
+  :: (HasEnv5 r)
+  => NewStage r Int
+sf5N = do
+  env <- ask
+  return $ 100 + getSF5env env
+
+newCoreChain :: () -> NewStage Env Int
+-- newCoreChain = (\_ -> sf1) >=> sf2 >=> sf3 >=> sf4 >=> (\_ -> sf5)
+newCoreChain = (\_ -> sf1N) >=> sf2N >=> sf3N >=> sf4N >=> (\_ -> sf5N)
+
+-- | If we do look at the function from only its own viewpoint
+-- The core function here is actually from One type to another.
+-- It is not necessary to know where is this input come from
+-- and 
+-- we definitly would like to stay purity and leave outside world along.
+class (Monad m) =>
+      SF4C m  where
+  effectSF4 :: (Double -> Double -> String) -> Double -> m String
+
+instance (HasEnv4 r, MonadIO m) =>
+         SF4C (ReaderT r m) where
+  effectSF4 f arg1 = do
+    env <- ask
+    return $ f arg1 $ getSF4env env
+
+sf4C
+  :: SF4C m
+  => (Double -> Double -> String) -> Double -> m String
+sf4C f arg1 = effectSF4 f arg1
+
+sf5C
+  :: (HasEnv5 r)
+  => NewStage r Int
+sf5C = do
+  env <- ask
+  return $ 100 + getSF5env env
