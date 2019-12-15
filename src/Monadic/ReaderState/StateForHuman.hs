@@ -67,6 +67,9 @@ module Monadic.ReaderState.StateForHuman where
 -- | Imports before Example One
 import Control.Monad.Trans.State
 import Control.Monad -- >=>
+import Data.Time.Clock.POSIX
+import Data.Int
+import Control.Monad.IO.Class
 
 -- |Example one
 -- In general . State Monad is a monad represent a function relation .
@@ -75,7 +78,7 @@ import Control.Monad -- >=>
 -- the Initial state will also be the first one as well .
 s1 :: Int -> State String Float
 s1 i = do
-  s <- get -- State Monad for retriving State information 
+  s <- get -- State Monad for retriving State information
   let is = show i ++ "_" ++ s
       r = fromIntegral i / (fromIntegral . length) is
   put is -- State Monad for updating State information
@@ -105,4 +108,33 @@ sChainOne = s1 >=> s2 >=> s3
 ---- > let r = sFunc "emmettng"
 ---- > r
 ---- (43,"1.8181819_20_emmettng_1.8181819_20_emmettng")
--- 20 ==> (20_#s
+
+-- | monad Transfor : StateT
+-- example from reddit:
+-- https://www.reddit.com/r/haskell/comments/2jdmdz/trying_to_understand_monad_transformers_state_in/
+type ClockTime = Int64
+
+posixToClockTime :: POSIXTime -> ClockTime
+posixToClockTime x = floor $ (*1000) . read . init . show $ x
+
+curTime :: IO ClockTime
+curTime = posixToClockTime `fmap` getPOSIXTime
+
+
+tickTock :: MonadIO m => StateT ClockTime m Bool
+tickTock = do
+    newtime <- liftIO curTime
+    oldtime <- get
+    let tick = oldtime < newtime
+    when tick $ put newtime
+    return tick
+
+runTimer :: MonadIO m => StateT ClockTime m ()
+runTimer = forever $ do
+    tick <- tickTock
+    when tick $ liftIO . print . show =<< get
+
+doIt :: IO ()
+doIt  = do
+    ct <- curTime
+    evalStateT runTimer ct
