@@ -3,7 +3,35 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: warp-grpc-0.1.0.3@sha256:8cb72a1fbbd1697486f7f2c5cdb2ed9e557cfeb1f3298bfcd81375d878b2b6a2,1571
+    pantry-tree:
+      size: 543
+      sha256: 8ceb71554204c0aee0a15789e07f1a582d4b579e8d7f6a7d9a98923dcef08051
+  original:
+    hackage: warp-grpc-0.1.0.3@sha256:8cb72a1fbbd1697486f7f2c5cdb2ed9e557cfeb1f3298bfcd81375d878b2b6a2,1571
+- completed:
+    hackage: http2-grpc-types-0.3.0.0@sha256:2c3043ddc9deb542d25d6651dfc252840b27b2a8e96e04deea5de93c43bb6d2c,1415
+    pantry-tree:
+      size: 405
+      sha256: b61ac7dcfe7854e026169ae602789692ce5215cd8e3b152fdd242d4039757b06
+  original:
+    hackage: http2-grpc-types-0.3.0.0@sha256:2c3043ddc9deb542d25d6651dfc252840b27b2a8e96e04deea5de93c43bb6d2c,1415
+- completed:
+    hackage: proto-lens-0.4.0.1@sha256:0bb0324e71814e021f87384f1210f120d9c775b9c159492ad0cf70d9b81a6d8f,2278
+    pantry-tree:
+      size: 1476
+      sha256: a76a8598d08f14a1ac543252c83128111b4917e5609cae5ffe4b0a96a4c8b579
+  original:
+    hackage: proto-lens-0.4.0.1@sha256:0bb0324e71814e021f87384f1210f120d9c775b9c159492ad0cf70d9b81a6d8f,2278
+- completed:
+    hackage: lens-labels-0.3.0.1@sha256:228b70bc37d3531c7a80aaa56f7d69bf9f9f0d85637bd886966b01f7d03d3f6b,1196
+    pantry-tree:
+      size: 400
+      sha256: d0898958b1d869aafe7796452bb04d0e6aef102457ca4c9dcc0fe329271e6091
+  original:
+    hackage: lens-labels-0.3.0.1@sha256:228b70bc37d3531c7a80aaa56f7d69bf9f9f0d85637bd886966b01f7d03d3f6b,1196
 snapshots:
 - completed:
     size: 545658

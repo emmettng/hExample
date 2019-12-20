@@ -36,6 +36,7 @@ library:
   - statistics
   - transformers
   - store
+  - warp-grpc
 
 
 executables:

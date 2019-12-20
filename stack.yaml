@@ -34,7 +34,12 @@ packages:
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
 #
-# extra-deps:
+extra-deps:
+- warp-grpc-0.1.0.3@sha256:8cb72a1fbbd1697486f7f2c5cdb2ed9e557cfeb1f3298bfcd81375d878b2b6a2,1571
+- http2-grpc-types-0.3.0.0@sha256:2c3043ddc9deb542d25d6651dfc252840b27b2a8e96e04deea5de93c43bb6d2c,1415
+- proto-lens-0.4.0.1@sha256:0bb0324e71814e021f87384f1210f120d9c775b9c159492ad0cf70d9b81a6d8f,2278
+- lens-labels-0.3.0.1@sha256:228b70bc37d3531c7a80aaa56f7d69bf9f9f0d85637bd886966b01f7d03d3f6b,1196
+
 # - acme-missiles-0.3
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
